@@ -1,10 +1,13 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "CitiRide Waitlist",
   description:
     "Join CitiRide's driver or rider waitlist for convenient, affordable transportation.",
+  icons: {
+    icon: "/assets/citiride-logo.svg",
+  },
 };
 
 export default function RootLayout({

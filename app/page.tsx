@@ -56,7 +56,6 @@ export default function HomePage() {
             loop
             muted
             playsInline
-            poster="/assets/hero-citiride.jpg"
           >
             <source src="/assets/waitlist-video-1.mp4" type="video/mp4" />
           </video>

@@ -1,11 +1,10 @@
-﻿# CitiRide Assets
+# CitiRide Assets
 
 `source/` contains the raw uploaded files exactly as provided.
 
 The app uses the cleaned filenames in this folder:
 
 - `citiride-logo.svg`
-- `hero-citiride.jpg`
 - `services-collage.png`
 - `about-city.png`
 - `review-person.jpg`

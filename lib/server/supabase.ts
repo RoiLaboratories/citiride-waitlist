@@ -1,24 +1,23 @@
-require("./env");
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-const { createClient } = require("@supabase/supabase-js");
+let client: SupabaseClient | null = null;
 
-let client;
-
-function hasSupabaseConfig() {
+export function hasSupabaseConfig() {
   return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 }
 
-function getSupabaseClient() {
+export function getSupabaseClient() {
   if (!hasSupabaseConfig()) {
     return null;
   }
 
   if (!client) {
     client = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY,
+      process.env.SUPABASE_URL as string,
+      process.env.SUPABASE_SERVICE_ROLE_KEY as string,
       {
         auth: {
+          autoRefreshToken: false,
           persistSession: false,
         },
       },
@@ -28,17 +27,10 @@ function getSupabaseClient() {
   return client;
 }
 
-function getWaitlistTable() {
+export function getWaitlistTable() {
   return process.env.SUPABASE_WAITLIST_TABLE || "waitlist_entries";
 }
 
-function getNewsletterTable() {
+export function getNewsletterTable() {
   return process.env.SUPABASE_NEWSLETTER_TABLE || "newsletter_subscribers";
 }
-
-module.exports = {
-  getNewsletterTable,
-  getSupabaseClient,
-  getWaitlistTable,
-  hasSupabaseConfig,
-};

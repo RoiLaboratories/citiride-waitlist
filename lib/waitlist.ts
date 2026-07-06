@@ -1,11 +1,9 @@
 import type { WaitlistApiResponse, WaitlistEntryPayload } from "@/types/waitlist";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
-
 export async function submitWaitlistEntry(
   payload: WaitlistEntryPayload,
 ): Promise<WaitlistApiResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/waitlist`, {
+  const response = await fetch("/api/waitlist", {
     body: JSON.stringify(payload),
     headers: {
       "Content-Type": "application/json",

@@ -3,12 +3,10 @@ import type {
   NewsletterSubscriptionResponse,
 } from "@/types/newsletter";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
-
 export async function submitNewsletterSubscription(
   payload: NewsletterSubscriptionPayload,
 ): Promise<NewsletterSubscriptionResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/newsletter`, {
+  const response = await fetch("/api/newsletter", {
     body: JSON.stringify(payload),
     headers: {
       "Content-Type": "application/json",

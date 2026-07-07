@@ -9,8 +9,8 @@ create table if not exists public.waitlist_entries (
   created_at timestamptz not null default now()
 );
 
-create unique index if not exists waitlist_entries_email_category_idx
-  on public.waitlist_entries (lower(email), category);
+-- create unique index if not exists waitlist_entries_email_idx
+--   on public.waitlist_entries (lower(email));
 
 create index if not exists waitlist_entries_category_created_at_idx
   on public.waitlist_entries (category, created_at desc);

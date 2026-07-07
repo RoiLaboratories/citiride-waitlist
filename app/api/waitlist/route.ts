@@ -16,6 +16,12 @@ async function readJson(request: Request) {
   }
 }
 
+function duplicateEmailMessage(category?: string) {
+  const categoryText = category ? ` on the ${category.toLowerCase()} waitlist` : "";
+
+  return `This email is already registered${categoryText}. An email address can only join one CitiRide waitlist category.`;
+}
+
 export async function POST(request: Request) {
   const rateLimit = checkRateLimit(request, "waitlist");
 
@@ -50,6 +56,30 @@ export async function POST(request: Request) {
     );
   }
 
+  const waitlistTable = getWaitlistTable();
+
+  const { data: existingEntry, error: duplicateCheckError } = await supabase
+    .from(waitlistTable)
+    .select("category")
+    .eq("email", parsed.data.email)
+    .maybeSingle();
+
+  if (duplicateCheckError) {
+    console.error("Supabase waitlist duplicate check failed", duplicateCheckError);
+
+    return NextResponse.json(
+      { error: "We could not save your waitlist registration. Please try again." },
+      { headers: rateLimit.headers, status: 500 },
+    );
+  }
+
+  if (existingEntry) {
+    return NextResponse.json(
+      { error: duplicateEmailMessage(existingEntry.category) },
+      { headers: rateLimit.headers, status: 409 },
+    );
+  }
+
   const record = {
     category: parsed.data.category,
     email: parsed.data.email,
@@ -58,7 +88,7 @@ export async function POST(request: Request) {
   };
 
   const { data, error } = await supabase
-    .from(getWaitlistTable())
+    .from(waitlistTable)
     .insert(record)
     .select("id, category, created_at")
     .single();
@@ -66,9 +96,7 @@ export async function POST(request: Request) {
   if (error) {
     if (error.code === "23505") {
       return NextResponse.json(
-        {
-          error: `This email is already on the ${parsed.data.category.toLowerCase()} waitlist.`,
-        },
+        { error: duplicateEmailMessage() },
         { headers: rateLimit.headers, status: 409 },
       );
     }

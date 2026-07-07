@@ -51,6 +51,10 @@ The API stores:
 - Email address
 - Category: `Driver` or `Rider`
 
+Each email address can join only one waitlist category. If an email is already registered as a driver, it cannot be reused for the rider waitlist, and vice versa.
+
+For a fresh Supabase project, run `supabase/schema.sql`. For an existing Supabase project that already has the waitlist tables, run only `supabase/migrations/20260707000000_waitlist_email_unique.sql` to update the email uniqueness rule without deleting tables.
+
 ## Newsletter Flow
 
 The `Stay in the Loop` form stores newsletter subscription emails in the `newsletter_subscribers` Supabase table by default. Override the table with `SUPABASE_NEWSLETTER_TABLE` when needed.
@@ -77,6 +81,8 @@ npm run check        # typecheck and build
   "category": "Rider"
 }
 ```
+
+Returns `409` if the email address already exists in either waitlist category.
 
 ### `POST /api/newsletter`
 

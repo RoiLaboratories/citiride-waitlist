@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { ArrowUpRight, Loader2 } from "lucide-react";
+import { StatusModal } from "@/components/StatusModal";
 import { submitNewsletterSubscription } from "@/lib/newsletter";
 
 export function NewsletterSubscribeForm() {
@@ -12,10 +13,15 @@ export function NewsletterSubscribeForm() {
   >({ message: "", type: "idle" });
 
   const isLoading = status.type === "loading";
+  const isModalOpen = status.type !== "idle";
+  const modalStatus = status.type === "idle" ? "loading" : status.type;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setStatus({ message: "Subscribing...", type: "loading" });
+    setStatus({
+      message: "Please wait while we subscribe your email.",
+      type: "loading",
+    });
 
     try {
       const response = await submitNewsletterSubscription({ email });
@@ -36,43 +42,58 @@ export function NewsletterSubscribeForm() {
     }
   }
 
+  function closeModal() {
+    if (status.type === "loading") {
+      return;
+    }
+
+    setStatus({ message: "", type: "idle" });
+  }
+
   return (
-    <form className="loop-form" onSubmit={handleSubmit}>
-      <div className="loop-form__control">
-        <input
-          aria-label="Email address"
-          autoComplete="email"
-          name="email"
-          onChange={(event) => setEmail(event.target.value)}
-          placeholder="Enter Email"
-          required
-          type="email"
-          value={email}
+    <>
+      <form className="loop-form" onSubmit={handleSubmit}>
+        <div className="loop-form__control">
+          <input
+            aria-label="Email address"
+            autoComplete="email"
+            name="email"
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="Enter Email"
+            required
+            type="email"
+            value={email}
+          />
+          <button
+            aria-label="Subscribe to newsletter"
+            disabled={isLoading}
+            type="submit"
+          >
+            {isLoading ? (
+              <Loader2 aria-hidden="true" className="spinner" size={22} />
+            ) : (
+              <ArrowUpRight aria-hidden="true" size={25} />
+            )}
+          </button>
+        </div>
+      </form>
+
+      {isModalOpen ? (
+        <StatusModal
+          descriptionId="newsletter-subscription-status-description"
+          message={status.message}
+          onClose={closeModal}
+          status={modalStatus}
+          title={
+            status.type === "loading"
+              ? "Subscribing..."
+              : status.type === "success"
+                ? "Subscribed successfully"
+                : "Subscription failed"
+          }
+          titleId="newsletter-subscription-status-title"
         />
-        <button
-          aria-label="Subscribe to newsletter"
-          disabled={isLoading}
-          type="submit"
-        >
-          {isLoading ? (
-            <Loader2 aria-hidden="true" className="spinner" size={22} />
-          ) : (
-            <ArrowUpRight aria-hidden="true" size={25} />
-          )}
-        </button>
-      </div>
-      <p
-        aria-live="polite"
-        className={`loop-form__message ${
-          status.type === "success"
-            ? "loop-form__message--success"
-            : status.type === "error"
-              ? "loop-form__message--error"
-              : ""
-        }`}
-      >
-        {status.message}
-      </p>
-    </form>
+      ) : null}
+    </>
   );
 }

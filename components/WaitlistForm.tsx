@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { ArrowRight, Loader2 } from "lucide-react";
+import { StatusModal } from "@/components/StatusModal";
 import { submitWaitlistEntry } from "@/lib/waitlist";
 import type { WaitlistCategory } from "@/types/waitlist";
 
@@ -27,6 +28,10 @@ export function WaitlistForm({ category }: WaitlistFormProps) {
     (value) => value.trim().length > 0,
   );
   const isSubmitDisabled = isLoading || !isFormComplete;
+  const isModalOpen = status.type !== "idle";
+  const modalStatus = status.type === "idle" ? "loading" : status.type;
+  const modalTitleId = `${category.toLowerCase()}-waitlist-status-title`;
+  const modalDescriptionId = `${category.toLowerCase()}-waitlist-status-description`;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -35,7 +40,10 @@ export function WaitlistForm({ category }: WaitlistFormProps) {
       return;
     }
 
-    setStatus({ message: "Submitting your details...", type: "loading" });
+    setStatus({
+      message: "Please wait while we save your details.",
+      type: "loading",
+    });
 
     try {
       const response = await submitWaitlistEntry({
@@ -63,76 +71,91 @@ export function WaitlistForm({ category }: WaitlistFormProps) {
     }
   }
 
+  function closeModal() {
+    if (status.type === "loading") {
+      return;
+    }
+
+    setStatus({ message: "", type: "idle" });
+  }
+
   return (
-    <form className="waitlist-form" onSubmit={handleSubmit}>
-      <div className="form-row">
+    <>
+      <form className="waitlist-form" onSubmit={handleSubmit}>
+        <div className="form-row">
+          <input
+            autoComplete="name"
+            name="fullName"
+            onChange={(event) =>
+              setForm((current) => ({
+                ...current,
+                fullName: event.target.value,
+              }))
+            }
+            placeholder="Full Name"
+            required
+            type="text"
+            value={form.fullName}
+          />
+          <input
+            autoComplete="address-level2"
+            name="stateCity"
+            onChange={(event) =>
+              setForm((current) => ({
+                ...current,
+                stateCity: event.target.value,
+              }))
+            }
+            placeholder="State / City"
+            required
+            type="text"
+            value={form.stateCity}
+          />
+        </div>
         <input
-          autoComplete="name"
-          name="fullName"
+          autoComplete="email"
+          name="email"
           onChange={(event) =>
             setForm((current) => ({
               ...current,
-              fullName: event.target.value,
+              email: event.target.value,
             }))
           }
-          placeholder="Full Name"
+          placeholder="Email Address"
           required
-          type="text"
-          value={form.fullName}
+          type="email"
+          value={form.email}
         />
-        <input
-          autoComplete="address-level2"
-          name="stateCity"
-          onChange={(event) =>
-            setForm((current) => ({
-              ...current,
-              stateCity: event.target.value,
-            }))
+        <button
+          data-loading={isLoading ? "true" : undefined}
+          disabled={isSubmitDisabled}
+          type="submit"
+        >
+          <span>Join the Waitlist</span>
+          {isLoading ? (
+            <Loader2 aria-hidden="true" className="spinner" size={18} />
+          ) : (
+            <ArrowRight aria-hidden="true" size={18} />
+          )}
+        </button>
+      </form>
+
+      {isModalOpen ? (
+        <StatusModal
+          descriptionId={modalDescriptionId}
+          message={status.message}
+          onClose={closeModal}
+          status={modalStatus}
+          title={
+            status.type === "loading"
+              ? "Joining the waitlist..."
+              : status.type === "success"
+                ? "Joined waitlist successfully"
+                : "Submission failed"
           }
-          placeholder="State / City"
-          required
-          type="text"
-          value={form.stateCity}
+          titleId={modalTitleId}
         />
-      </div>
-      <input
-        autoComplete="email"
-        name="email"
-        onChange={(event) =>
-          setForm((current) => ({
-            ...current,
-            email: event.target.value,
-          }))
-        }
-        placeholder="Email Address"
-        required
-        type="email"
-        value={form.email}
-      />
-      <button
-        data-loading={isLoading ? "true" : undefined}
-        disabled={isSubmitDisabled}
-        type="submit"
-      >
-        <span>Join the Waitlist</span>
-        {isLoading ? (
-          <Loader2 aria-hidden="true" className="spinner" size={18} />
-        ) : (
-          <ArrowRight aria-hidden="true" size={18} />
-        )}
-      </button>
-      <p
-        aria-live="polite"
-        className={`form-message ${
-          status.type === "success"
-            ? "form-message--success"
-            : status.type === "error"
-              ? "form-message--error"
-              : ""
-        }`}
-      >
-        {status.message}
-      </p>
-    </form>
+      ) : null}
+    </>
   );
 }

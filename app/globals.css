@@ -4627,3 +4627,194 @@ img {
   left: 0;
   right: auto;
 }
+/* Waitlist submission status modal. */
+.waitlist-status-modal__backdrop {
+  align-items: center;
+  animation: waitlistModalBackdropIn 180ms ease both;
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 24px;
+  position: fixed;
+  z-index: 1200;
+}
+
+.waitlist-status-modal {
+  animation: waitlistModalIn 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  color: #ffffff;
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  max-width: 410px;
+  padding: 34px 30px 28px;
+  position: relative;
+  text-align: center;
+  width: min(100%, 410px);
+}
+
+.waitlist-status-modal__icon {
+  align-items: center;
+  background: var(--yellow);
+  border-radius: 999px;
+  color: #000000;
+  display: inline-flex;
+  height: 64px;
+  justify-content: center;
+  width: 64px;
+}
+
+.waitlist-status-modal--error .waitlist-status-modal__icon {
+  background: #ffb2a8;
+}
+
+.waitlist-section--driver .waitlist-copy .waitlist-status-modal h3,
+.waitlist-section--rider .waitlist-copy .waitlist-status-modal h3,
+.waitlist-copy .waitlist-status-modal h3,
+.waitlist-status-modal h3 {
+  color: #ffffff;
+  font-family: "Inter", Arial, sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.2;
+  margin: 4px 0 0;
+}
+
+.waitlist-section--driver .waitlist-copy .waitlist-status-modal p,
+.waitlist-section--rider .waitlist-copy .waitlist-status-modal p,
+.waitlist-copy .waitlist-status-modal p,
+.waitlist-status-modal p {
+  color: rgba(255, 255, 255, 0.74);
+  font-family: "Inter", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 320px;
+}
+
+.waitlist-status-modal__close {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  height: 32px;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0;
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+  width: 32px;
+}
+
+.waitlist-status-modal__close svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.waitlist-status-modal__action {
+  align-items: center;
+  background: var(--yellow);
+  border: 0;
+  border-radius: 999px;
+  color: #000000;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: "Inter", Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  justify-content: center;
+  margin-top: 4px;
+  min-height: 42px;
+  min-width: 132px;
+  padding: 0 24px;
+  transition:
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+@keyframes waitlistModalBackdropIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes waitlistModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .waitlist-status-modal__close:hover {
+    background: rgba(245, 231, 0, 0.14);
+    border-color: rgba(245, 231, 0, 0.45);
+    color: var(--yellow);
+    transform: translateY(-1px);
+  }
+
+  .waitlist-status-modal__action:hover {
+    box-shadow: 0 14px 28px rgba(245, 231, 0, 0.24);
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 640px) {
+  .waitlist-status-modal__backdrop {
+    padding: 18px;
+  }
+
+  .waitlist-status-modal {
+    padding: 32px 22px 24px;
+  }
+
+  .waitlist-section--driver .waitlist-copy .waitlist-status-modal h3,
+.waitlist-section--rider .waitlist-copy .waitlist-status-modal h3,
+.waitlist-copy .waitlist-status-modal h3,
+.waitlist-status-modal h3 {
+    font-size: 20px;
+  }
+
+  .waitlist-section--driver .waitlist-copy .waitlist-status-modal p,
+.waitlist-section--rider .waitlist-copy .waitlist-status-modal p,
+.waitlist-copy .waitlist-status-modal p,
+.waitlist-status-modal p {
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .waitlist-status-modal__backdrop,
+  .waitlist-status-modal {
+    animation: none;
+  }
+
+  .waitlist-status-modal__close,
+  .waitlist-status-modal__action {
+    transition: none;
+  }
+}

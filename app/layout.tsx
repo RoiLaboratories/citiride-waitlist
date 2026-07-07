@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     "Join CitiRide's driver or rider waitlist for convenient, affordable transportation.",
   icons: {
-    icon: "/assets/citiride-logo.svg",
+    icon: "/assets/citiride_logo.png",
   },
 };
 
